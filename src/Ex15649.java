@@ -1,3 +1,4 @@
+// 15649 N과 M - 첫 번째 풀이
 import java.io.*;
 import java.util.*;
 
@@ -42,11 +43,11 @@ public class Ex15649 {
 }
 
 
-
+// 15649 N과 M - 두 번째 풀이
 //import java.io.*;
 //import java.util.*;
 //
-//public class test {
+//public class Ex15649 {
 //    static int N;
 //    static int M;
 //    static boolean[] visit;
