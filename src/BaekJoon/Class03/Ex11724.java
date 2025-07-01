@@ -1,14 +1,14 @@
 package BaekJoon.Class03;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Ex11724 {
     static boolean[] visited;
-    static ArrayList[] nodeList;
+    static ArrayList<Integer>[] nodeList;
+    static int count;
     public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         StringTokenizer st = new StringTokenizer(br.readLine());
         int N = Integer.parseInt(st.nextToken());
@@ -27,6 +27,27 @@ public class Ex11724 {
             nodeList[u].add(v);
             nodeList[v].add(u);
         }
-        System.out.println(Arrays.toString(nodeList));
+
+        for (int i = 1; i <= N; i++) {
+            if (!visited[i]) {
+                dfs(i);
+                count++;
+            }
+        }
+        bw.write(count + "\n");
+
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+
+    static void dfs(int start) {
+        visited[start] = true;
+
+        for (int v : nodeList[start]) {
+            if (!visited[v]) {
+                dfs(v);
+            }
+        }
     }
 }
