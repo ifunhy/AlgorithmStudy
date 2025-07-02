@@ -1,3 +1,5 @@
+package BaekJoon.Others;
+
 import java.io.*;
 
 public class baekjoonTest {

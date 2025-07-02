@@ -1,3 +1,5 @@
+package BaekJoon.Others;
+
 import java.util.*;
 import java.io.*;
 

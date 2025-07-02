@@ -1,4 +1,4 @@
-// 15649 N과 M - 첫 번째 풀이
+package BaekJoon.Others;// 15649 N과 M - 첫 번째 풀이
 import java.io.*;
 import java.util.*;
 

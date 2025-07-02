@@ -1,4 +1,4 @@
-//import java.io.*;
+package BaekJoon.Others;//import java.io.*;
 //import java.util.*;
 //
 //public class Ex1032 {

@@ -1,4 +1,4 @@
-// 6603 로또 - 첫 번째 풀이
+package BaekJoon.Others;// 6603 로또 - 첫 번째 풀이
 import java.io.*;
 import java.util.*;
 
