@@ -1,54 +1,74 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.LinkedList;
+import java.io.*;
 import java.util.StringTokenizer;
 
 public class test2 {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
 
-        int n = Integer.parseInt(br.readLine());
-        int[] arr = new int[n];
-        int[] dp = new int[n];
-        int[] prev = new int[n]; // i번째 원소 앞에 연결된 수열 인덱스
-
+        int N = Integer.parseInt(br.readLine());
         StringTokenizer st = new StringTokenizer(br.readLine());
-        for (int i = 0; i < n; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-            dp[i] = 1;
-            prev[i] = -1;
+        int[] request = new int[N];
+
+        for (int i = 0; i < N; i++) {
+            request[i] = Integer.parseInt(st.nextToken());  // 예: 140 110 120 150
         }
 
-        for (int i = 1; i < n; i++) {
-            for (int j = 0; j < i; j++) {
-                if (arr[j] < arr[i] && dp[i] < dp[j] + 1) {
-                    dp[i] = dp[j] + 1;
-                    prev[i] = j;
+        int budget = Integer.parseInt(br.readLine());   // 예: 485
+        int division = budget / N;      // 예: 121
+        int remainder = budget % N;     // 예: 1
+        boolean[] visited = new boolean[N + 1];
+        int trueCount = 0;
+        int maxRequest = 0;
+
+        while (budget >= 0) {
+            boolean changed = false;    // 변화 감지 플래그
+
+            for (int i = 0; i < N; i++) {
+                if (division < request[i]) {
+                    trueCount = 0;
+                    for (boolean element : visited) {
+                        if (element)
+                            trueCount++;
+                    }
+
+                    if (!visited[i]) {
+                        visited[i] = true;  // 첫 방문이면 기록만
+                        changed = true;
+                    } else {    // 두 번째 방문일 때 분배 및 갱신
+                        int distributed;
+                        if (trueCount == 0) {
+                            distributed = division;
+                        } else {
+                            distributed = division + (remainder / trueCount);
+                        }
+
+                        if (distributed <= request[i]) {
+                            if (distributed > maxRequest) {
+                                maxRequest = distributed;
+                            }
+                        } else {
+                            if (request[i] > maxRequest) {
+                                maxRequest = request[i];
+                            }
+                        }
+
+                        budget -= distributed;
+                        changed = true;
+                    }
+                } else {
+                    if (!visited[i]) {
+                        visited[i] = true;
+                        budget -= request[i];
+                        remainder += division - request[i];
+                        changed = true;
+                    }
                 }
             }
+
+            if (!changed)   // 변화 없으면 종료
+                break;
         }
 
-        int max = 0, idx = 0;
-        for (int i = 0; i < n; i++) {
-            if (dp[i] > max) {
-                max = dp[i];
-                idx = i;
-            }
-        }
-        sb.append(max + "\n");
-
-        LinkedList<Integer> list = new LinkedList<>();
-        while (idx != -1) {
-            list.add(arr[idx]);
-            idx = prev[idx];
-        }
-        while (!list.isEmpty())
-            sb.append(list.removeLast() + " ");
-
-        System.out.println(sb);
-
-        br.close();
+        System.out.println(maxRequest);
     }
 }
