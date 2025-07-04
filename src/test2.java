@@ -1,74 +1,74 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class test2 {
-    public static void main(String[] args) throws IOException{
+    static final int INF = 987654321;
+
+    public static void main(String[] args) throws NumberFormatException, IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
-        int N = Integer.parseInt(br.readLine());
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        int[] request = new int[N];
 
-        for (int i = 0; i < N; i++) {
-            request[i] = Integer.parseInt(st.nextToken());  // 예: 140 110 120 150
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+        int[][] arr = new int[N + 1][N + 1];
+
+        // 초기값 설정
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= N; j++) {
+                arr[i][j] = INF;
+
+                if (i == j) {
+                    arr[i][j] = 0;
+                }
+            }
         }
 
-        int budget = Integer.parseInt(br.readLine());   // 예: 485
-        int division = budget / N;      // 예: 121
-        int remainder = budget % N;     // 예: 1
-        boolean[] visited = new boolean[N + 1];
-        int trueCount = 0;
-        int maxRequest = 0;
+        // 간선의 방향이 양방향이어야 함.
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int x = Integer.parseInt(st.nextToken());
+            int y = Integer.parseInt(st.nextToken());
 
-        while (budget >= 0) {
-            boolean changed = false;    // 변화 감지 플래그
+            arr[x][y] = arr[y][x] = 1;
+        }
 
-            for (int i = 0; i < N; i++) {
-                if (division < request[i]) {
-                    trueCount = 0;
-                    for (boolean element : visited) {
-                        if (element)
-                            trueCount++;
-                    }
-
-                    if (!visited[i]) {
-                        visited[i] = true;  // 첫 방문이면 기록만
-                        changed = true;
-                    } else {    // 두 번째 방문일 때 분배 및 갱신
-                        int distributed;
-                        if (trueCount == 0) {
-                            distributed = division;
-                        } else {
-                            distributed = division + (remainder / trueCount);
-                        }
-
-                        if (distributed <= request[i]) {
-                            if (distributed > maxRequest) {
-                                maxRequest = distributed;
-                            }
-                        } else {
-                            if (request[i] > maxRequest) {
-                                maxRequest = request[i];
-                            }
-                        }
-
-                        budget -= distributed;
-                        changed = true;
-                    }
-                } else {
-                    if (!visited[i]) {
-                        visited[i] = true;
-                        budget -= request[i];
-                        remainder += division - request[i];
-                        changed = true;
+        // 플로이드 와샬 알고리즘
+        for (int k = 1; k <= N; k++) {
+            for (int i = 1; i <= N; i++) {
+                for (int j = 1; j <= N; j++) {
+                    // 최단경로 초기화
+                    if (arr[i][j] > arr[i][k] + arr[k][j]) {
+                        arr[i][j] = arr[i][k] + arr[k][j];
                     }
                 }
             }
-
-            if (!changed)   // 변화 없으면 종료
-                break;
         }
 
-        System.out.println(maxRequest);
+        int res = INF;
+        int idx = -1;
+
+        // 케빈 베이컨의 수가 가장 작은 인덱스를 탐색
+        for (int i = 1; i <= N; i++) {
+            int total = 0;
+            for (int j = 1; j <= N; j++) {
+                total += arr[i][j];
+            }
+
+            if (res > total) {
+                res = total;
+                idx = i;
+            }
+        }
+
+        bw.write(idx + "\n");
+        bw.flush();
+        bw.close();
+        br.close();
     }
+
 }

@@ -1,61 +1,68 @@
-//package BaekJoon.Class03;
-//
-//import java.io.*;
-//import java.util.StringTokenizer;
-//
-//public class Ex2630 {
-//
-//    static int white = 0;   // 흰색 색종이 개수 저장
-//    static int blue = 0;    // 파란색 색종이 개수 저장
-//    static int[][] paper;   // 입력으로 들어올 색종이 정보 저장할 2차원 배열
-//
-//    public static void main(String[] args) throws IOException {
-//        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-//
-//        int N = Integer.parseInt(br.readLine());    // 색종이의 한 변의 길이 N (N x N)
-//        paper = new int[N][N];  // 색종이 크기만큼 2차원 배열 생성
-//
-//        // 색종이 데이터 입력 받기
-//        for (int i = 0; i < N; i++) {
-//            StringTokenizer st = new StringTokenizer(br.readLine());
-//            for (int j = 0; j < N; j++) {
-//                paper[i][j] = Integer.parseInt(st.nextToken()); // 0(흰색) 또는 1(파란색) 저장
-//            }
-//        }
-//
-//        // (0, 0) 좌표에서 시작하여 N x N 크기의 종이를 4등분하면서 확인
-//        quarter(0, 0, N);
-//
-//        System.out.println(white);
-//        System.out.println(blue);
-//    }
-//
-//    // 종이를 재귀적으로 4등분하면서 색이 모두 같은지 확인
-//    public static void quarter(int x, int y, int n) {
-//        boolean flag = true;    // 현재 영역이 모두 같은 색인지 확인하는 flag
-//
-//        // (x, y)부터 (x+n, y+n)까지 순회하면서 색 일치 여부 확인
-//        for (int i = 0; i < n; i++) {
-//            for (int j = 0; j < n; j++) {
-//                if (paper[x][y] != paper[x+i][y+j]) {   // 기준점(x, y)과 다른 색이 있는 경우
-//                    flag = false; // 색이 섞여있음
-//                    break;
-//                }
-//            }
-//            if(!flag) break; // 바깥쪽 루프도 중단
-//        }
-//
-//        // 모두 같은 색일 경우
-//        if (flag == true) {
-//            if (paper[x][y] == 0)
-//                white++; // 흰색이면 white 증가
-//            else
-//                blue++;  // 파란색이면 blue 증가
-//        } else {    // 색이 섞여있으면 4등분하여 재귀 호출
-//            quarter(x, y, n/2);                           // 왼쪽 위
-//            quarter(x + n / 2, y, n/2);                // 오른쪽 위
-//            quarter(x, y + n / 2, n/2);                // 왼쪽 아래
-//            quarter(x + n / 2, y + n / 2, n/2);     // 오른쪽 아래
-//        }
-//    }
-//}
+import java.io.*;
+import java.util.StringTokenizer;
+
+public class test {
+    static final int INF = 987654321; // 무한대를 의미하는 값 (충분히 큰 수)
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+
+        int N = Integer.parseInt(st.nextToken()); // 유저 수
+        int M = Integer.parseInt(st.nextToken()); // 친구 관계 수
+        int[][] arr = new int[N + 1][N + 1];       // 거리 저장 배열 (1-indexed)
+
+        // 거리 배열 초기화
+        // 모든 정점 간의 "최단 거리"를 구하기 위해 시작값을 명확히 설정
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= N; j++) {
+                arr[i][j] = INF; // 초기에는 모두 무한 거리로 설정
+                if (i == j) arr[i][j] = 0; // 자기 자신으로의 거리는 0
+            }
+        }
+
+        // 친구 관계 입력 처리 (무방향 그래프)
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int x = Integer.parseInt(st.nextToken()); // 사용자 x
+            int y = Integer.parseInt(st.nextToken()); // 사용자 y
+
+            arr[x][y] = 1; // 친구면 거리 1
+            arr[y][x] = 1; // 양방향 관계
+        }
+
+        // 플로이드-워셜 알고리즘 수행
+        for (int k = 1; k <= N; k++) {         // 경유지 k
+            for (int i = 1; i <= N; i++) {     // 출발지 i
+                for (int j = 1; j <= N; j++) { // 도착지 j
+                    // i에서 j로 가는 최단 경로를 업데이트
+                    arr[i][j] = Math.min(arr[i][j], arr[i][k] + arr[k][j]);
+                }
+            }
+        }
+
+        int res = INF; // 최소 케빈 베이컨 수
+        int idx = -1;  // 최소 값을 가진 사용자 번호
+
+        // 각 사람마다 다른 모든 사람과의 거리 합을 계산
+        for (int i = 1; i <= N; i++) {
+            int total = 0; // i번 사람의 케빈 베이컨 수
+            for (int j = 1; j <= N; j++) {
+                total += arr[i][j]; // i에서 j까지의 거리 합산
+            }
+
+            // 더 작은 케빈 베이컨 수가 있으면 갱신
+            if (res > total) {
+                res = total;
+                idx = i;
+            }
+        }
+
+        // 가장 케빈 베이컨 수가 적은 사람의 번호 출력
+        bw.write(idx + "\n");
+        bw.flush();
+        bw.close();
+        br.close();
+    }
+}
