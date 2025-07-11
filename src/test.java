@@ -1,9 +1,8 @@
-package BaekJoon.Class03;
 import java.io.*;                 // 입출력 관련 클래스
 import java.util.*;               // 자료구조 관련 클래스 (Queue 등)
 import java.awt.*;                // Point 클래스 사용을 위해 import
 
-public class Ex2178 {
+public class test {
     // 미로의 행 크기
     static int N;
     // 미로의 열 크기
