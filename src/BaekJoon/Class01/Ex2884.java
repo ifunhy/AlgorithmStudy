@@ -23,4 +23,3 @@ public class Ex2884 {
         System.out.println(H + " " + M);
     }
 }
-
